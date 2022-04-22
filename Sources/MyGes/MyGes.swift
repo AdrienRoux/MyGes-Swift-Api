@@ -1,5 +1,5 @@
 public struct MyGes {
-    public private(set) var text = "Hello, World! AHAH"
+    public private(set) var text = "Hello, World!"
 
     public init() {
         
