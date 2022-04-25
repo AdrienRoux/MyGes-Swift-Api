@@ -20,7 +20,7 @@ import SwiftUI
 import FoundationNetworking
 #endif
 
-class APIService {
+public class APIService {
     static let shared = APIService()
     
     var credentials: Credentials?
