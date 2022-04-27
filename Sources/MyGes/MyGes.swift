@@ -33,7 +33,7 @@ public struct GesAuthenticationToken {
 }
 
 public class MyGes {
-    static let shared = MyGes()
+    public static let shared = MyGes()
     
     var credentials: Credentials?
     var token: GesAuthenticationToken?
