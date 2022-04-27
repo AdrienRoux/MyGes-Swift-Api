@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct GradeItem : Codable, Hashable {
+public struct GradeItem : Codable, Hashable {
     var course: String?
     var code: String?
     var grades : [Float]?

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CourseItem : Codable {
+public struct CourseItem : Codable {
     var ects: Int?
     var coef: Int?
     var name: String?

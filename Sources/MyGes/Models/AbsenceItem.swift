@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct AbsenceItem : Codable, Hashable {
+public struct AbsenceItem : Codable, Hashable {
     var date : Int64?
     var course_name : String?
     var justified : Bool?

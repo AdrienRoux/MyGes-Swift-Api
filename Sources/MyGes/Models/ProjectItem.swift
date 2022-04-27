@@ -51,7 +51,7 @@ struct ProjectFileItem : Codable, Hashable {
     var pro_id: Int?
 }
 
-struct ProjectItem : Codable, Hashable {
+public struct ProjectItem : Codable, Hashable {
     var project_id : Int?
     var teacher_id : Int?
     var author : String?

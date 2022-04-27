@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ProjectStepItem : Codable, Hashable {
+public struct ProjectStepItem : Codable, Hashable {
     var course_name : String?
     var group_id : Int?
     var pro_id : Int?

@@ -1,12 +1,4 @@
 //
-//  File.swift
-//  
-//
-//  Created by Adri on 22/04/2022.
-//
-
-import Foundation
-//
 //  ApiService.swift
 //  MygesCalendarConverter (iOS)
 //
@@ -45,14 +37,14 @@ public class APIService {
         var tokenType: String
     }
     
-    func login(_ credentials: Credentials, _ keepingData: Bool, completion: @escaping (Result<Bool, APIError>) -> Void) {
+    func login(_ credentials: Credentials, saveCredentials: Bool = false, completion: @escaping (Result<Bool, APIError>) -> Void) {
         generateAccessToken(credentials) { (result: Result<AccessToken, APIError>) in
             switch result {
             case .success(let receivedToken):
                 self.credentials = credentials
                 self.token = GesAuthenticationToken(accessToken: receivedToken.accessToken, tokenType: receivedToken.tokenType)
                 
-                if keepingData {
+                if saveCredentials {
                     UserDefaults.standard.set(credentials.username, forKey: "username")
                     UserDefaults.standard.set(credentials.password, forKey: "password")
                 }
@@ -185,7 +177,7 @@ public class APIService {
         }.resume()
     }
     
-    func convertErrorToAccessToken(_ error: Error) -> AccessToken {
+    private func convertErrorToAccessToken(_ error: Error) -> AccessToken {
         let accessUrl = (error as NSError).userInfo["NSErrorFailingURLStringKey"]! as! String
         
         var urlElements = (accessUrl as NSString).components(separatedBy: "&")
@@ -199,7 +191,7 @@ public class APIService {
         return AccessToken(accessToken: urlElements[0], tokenType: urlElements[1], expiresIn: urlElements[2], scope: urlElements[3], uid: "")
     }
     
-    func request(_ method: String, _ urlString: String, _ parameters: [String: Any] = [:], _ isKordisApi : Bool = true, completion: @escaping(Result<Data, Error>) -> Void) {
+    private func request(_ method: String, _ urlString: String, _ parameters: [String: Any] = [:], _ isKordisApi : Bool = true, completion: @escaping(Result<Data, Error>) -> Void) {
         if (token != nil && isKordisApi) ||  !isKordisApi {
             let url = URL(string: (isKordisApi ? "https://api.kordis.fr" : "") +  "\(urlString)")!
             var request = URLRequest(url: url)
@@ -232,91 +224,98 @@ public class APIService {
         }
     }
     
-    func getYears(completion: @escaping (_ result: YearsResult) -> Void) {
+    func getYears(completion: @escaping (_ result: YearsResult?) -> Void) {
         return self.get("/me/years") { result in
             switch result {
             case .success(let data):
-                completion(data.decodeAsClass() ?? YearsResult.empty())
+                completion(data.decodeAsClass())
             case .failure(_):
                 print("There was an error fetching years")
+                completion(nil)
             }
         }
     }
     
-    func getProfile(completion: @escaping (_ result: ProfileResult) -> Void) {
+    func getProfile(completion: @escaping (_ result: ProfileResult?) -> Void) {
         return self.get("/me/profile") { result in
             switch result {
             case .success(let data):
-                completion(data.decodeAsClass() ?? ProfileResult.empty())
+                completion(data.decodeAsClass())
             case .failure(_):
                 print("There was an error fetching profile")
-                completion(ProfileResult.empty())
+                completion(nil)
             }
         }
     }
     
-    func getAgenda(_ start: Date, _ end: Date, completion: @escaping(_ result : AgendaResult) -> Void) {
+    func getAgenda(_ start: Date, _ end: Date, completion: @escaping(_ result : AgendaResult?) -> Void) {
         self.get("/me/agenda?start=\(start.millisecondsSince1970)&end=\(end.millisecondsSince1970)") { result in
             switch result {
             case .success(let data):
-                completion(data.decodeAsClass() ?? AgendaResult.empty())
+                completion(data.decodeAsClass())
             case .failure(_):
                 print("There was an error fetching agenda")
+                completion(nil)
             }
         }
     }
     
-    func getAbsences(_ year: String, completion: @escaping (_ result: AbsenceResult) -> Void) {
+    func getAbsences(_ year: String, completion: @escaping (_ result: AbsenceResult?) -> Void) {
         return self.get("/me/\(year)/absences") { result in
             switch result {
             case .success(let data):
-                completion(data.decodeAsClass() ?? AbsenceResult.empty())
+                completion(data.decodeAsClass())
             case .failure(_):
                 print("There was an error fetching absences")
+                completion(nil)
             }
         }
     }
     
-    func getGrades(_ year: String, completion: @escaping (_ result: GradesResult) -> Void ){
+    func getGrades(_ year: String, completion: @escaping (_ result: GradesResult?) -> Void ){
         return self.get("/me/\(year)/grades") { result in
             switch result {
             case .success(let data):
-                completion(data.decodeAsClass() ?? GradesResult.empty())
+                completion(data.decodeAsClass())
             case .failure(_):
                 print("There was an error fetching grades")
+                completion(nil)
             }
         }
     }
     
-    func getCourses(_ year: String, completion: @escaping (_ result: CoursesResult) -> Void) {
+    func getCourses(_ year: String, completion: @escaping (_ result: CoursesResult?) -> Void) {
         return self.get("/me/\(year)/courses") { result in
             switch result {
             case .success(let data):
-                completion(data.decodeAsClass() ?? CoursesResult.empty())
+                completion(data.decodeAsClass())
             case .failure(_):
                 print("There was an error fetching courses")
+                completion(nil)
             }
         }
     }
     
-    func getProjects(_ year: String, completion: @escaping (_ result: ProjectsResult) -> Void) {
+    func getProjects(_ year: String, completion: @escaping (_ result: ProjectsResult?) -> Void) {
         return self.get("/me/\(year)/projects") { result in
             switch result {
             case .success(let data):
-                completion(data.decodeAsClass() ?? ProjectsResult.empty())
+                completion(data.decodeAsClass())
             case .failure(_):
                 print("There was an error fetching projects")
+                completion(nil)
             }
         }
     }
     
-    func getNextProjectSteps(completion: @escaping (_ result: ProjectStepsResult) -> Void) {
+    func getNextProjectSteps(completion: @escaping (_ result: ProjectStepsResult?) -> Void) {
         return self.get("/me/nextProjectSteps") { result in
             switch result {
             case .success(let data):
-                completion(data.decodeAsClass() ?? ProjectStepsResult.empty())
+                completion(data.decodeAsClass())
             case .failure(_):
                 print("There was an error fetching next project steps")
+                completion(nil)
             }
         }
     }
