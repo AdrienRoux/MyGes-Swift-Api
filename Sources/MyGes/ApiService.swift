@@ -12,30 +12,30 @@ import SwiftUI
 import FoundationNetworking
 #endif
 
+public enum APIError: Error {
+    case NotFound
+    case HttpRequest
+    case NoInternet
+}
+
+public struct AccessToken {
+    var accessToken: String
+    var tokenType: String
+    var expiresIn: String
+    var scope: String
+    var uid: String
+}
+
+public struct GesAuthenticationToken {
+    var accessToken: String
+    var tokenType: String
+}
+
 public class APIService {
     static let shared = APIService()
     
     var credentials: Credentials?
     var token: GesAuthenticationToken?
-    
-    enum APIError: Error {
-        case NotFound
-        case HttpRequest
-        case NoInternet
-    }
-    
-    struct AccessToken {
-        var accessToken: String
-        var tokenType: String
-        var expiresIn: String
-        var scope: String
-        var uid: String
-    }
-    
-    struct GesAuthenticationToken {
-        var accessToken: String
-        var tokenType: String
-    }
     
     func login(_ credentials: Credentials, saveCredentials: Bool = false, completion: @escaping (Result<Bool, APIError>) -> Void) {
         generateAccessToken(credentials) { (result: Result<AccessToken, APIError>) in
@@ -47,12 +47,6 @@ public class APIService {
                 if saveCredentials {
                     UserDefaults.standard.set(credentials.username, forKey: "username")
                     UserDefaults.standard.set(credentials.password, forKey: "password")
-                }
-                
-                self.getProfilePictureLink {
-                    if $0 != nil {
-                        UserDefaults.standard.set($0!, forKey: "profilePicture")
-                    }
                 }
                 
                 completion(.success(true))
@@ -128,7 +122,7 @@ public class APIService {
         }.resume()
     }
     
-    private func getProfilePictureLink(completion: @escaping (String?) -> Void) {
+    func getProfilePictureLink(completion: @escaping (String?) -> Void) {
         getAuthPageToken {
             if $0 != nil {
                 self.getCAS($0!) {
@@ -150,7 +144,7 @@ public class APIService {
         getResultFromApi(credentials) { result in
             switch result {
             case is APIError:
-                completion(.failure(result as! APIService.APIError))
+                completion(.failure(result as! APIError))
             case URLError.unsupportedURL:
                 completion(.success(self.convertErrorToAccessToken(result)))
             default:

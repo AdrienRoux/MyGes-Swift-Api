@@ -4,6 +4,24 @@ public struct MyGes {
     public static var credentials: Credentials?
     public static var saveCredentials: Bool = false
     
+    public static func login(_ credentials: Credentials? = MyGes.credentials, saveCredentials: Bool = false, completion: @escaping (APIError?) -> Void) {
+        if credentials != nil {
+            MyGes.credentials = credentials
+            MyGes.saveCredentials = saveCredentials
+            APIService.shared.login(credentials!, saveCredentials: saveCredentials) {
+                switch $0 {
+                case .success:
+                    completion(nil)
+                case .failure(let error):
+                    completion(error)
+                }
+            }
+        } else {
+            print("You must fill credentials.")
+            completion(APIError.NotFound)
+        }
+    }
+    
     public static func getLastYear(completion: @escaping (Int?) -> Void) {
         tryLogin {
             if $0 {
@@ -182,6 +200,10 @@ public struct MyGes {
                 completion(false)
             }
         }
+    }
+    
+    public static func getProfilePicLink(completion: @escaping (String?) -> Void) {
+        APIService.shared.getProfilePictureLink { completion($0) }
     }
     
     private static func tryLogin(completion: @escaping (Bool) -> Void) {
