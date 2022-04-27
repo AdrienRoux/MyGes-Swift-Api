@@ -320,10 +320,17 @@ public class APIService {
         }
     }
     
-    
-    //    func getProject(_ id: String) {
-    //        return self.get("/me/projects/\(id)") //as Project
-    //    }
+    func getProject(projectId: Int, completion: @escaping (_ result: ProjectResult?) -> Void) {
+        return self.get("/me/projects/\(projectId)") { result in
+            switch result {
+            case .success(let data):
+                completion(data.decodeAsClass())
+            case .failure(_):
+                print("There was an error fetching next project steps")
+                completion(nil)
+            }
+        }
+    }
     
     func joinProjectGroup(_ projectRcId: Int, _ projectId: Int, _ projectGroupId: Int, completion: @escaping (Bool) -> Void) {
         self.post("/me/courses/\(projectRcId)/projects/\(projectId)/groups/\(projectGroupId)") {
