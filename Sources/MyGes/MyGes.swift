@@ -13,32 +13,32 @@ import SwiftUI
 import FoundationNetworking
 #endif
 
+public enum APIError: Error {
+    case NotFound
+    case HttpRequest
+    case NoInternet
+}
+
+public struct AccessToken {
+    var accessToken: String
+    var tokenType: String
+    var expiresIn: String
+    var scope: String
+    var uid: String
+}
+
+public struct GesAuthenticationToken {
+    var accessToken: String
+    var tokenType: String
+}
+
 public class MyGes {
     static let shared = APIService()
     
     var credentials: Credentials?
     var token: GesAuthenticationToken?
     
-    enum APIError: Error {
-        case NotFound
-        case HttpRequest
-        case NoInternet
-    }
-    
-    struct AccessToken {
-        var accessToken: String
-        var tokenType: String
-        var expiresIn: String
-        var scope: String
-        var uid: String
-    }
-    
-    struct GesAuthenticationToken {
-        var accessToken: String
-        var tokenType: String
-    }
-    
-    func login(_ credentials: Credentials, _ keepingData: Bool, completion: @escaping (Result<Bool, APIError>) -> Void) {
+    public func login(_ credentials: Credentials, _ keepingData: Bool, completion: @escaping (Result<Bool, APIError>) -> Void) {
         generateAccessToken(credentials) { (result: Result<AccessToken, APIError>) in
             switch result {
             case .success(let receivedToken):
@@ -151,7 +151,7 @@ public class MyGes {
         getResultFromApi(credentials) { result in
             switch result {
             case is APIError:
-                completion(.failure(result as! MyGes.APIError))
+                completion(.failure(result as! APIError))
             case URLError.unsupportedURL:
                 completion(.success(self.convertErrorToAccessToken(result)))
             default:
