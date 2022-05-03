@@ -18,10 +18,19 @@ final class MyGesTests: XCTestCase {
         s.wait()
     }
     
+    func testGetYears() throws {
+        let s = DispatchSemaphore(value: 0)
+        MyGes.getLastYear {
+            XCTAssert($0 != nil)
+            s.signal()
+        }
+        s.wait()
+    }
+    
     func testGetLastYear() throws {
         let s = DispatchSemaphore(value: 0)
         MyGes.getLastYear {
-            XCTAssert($0 == 2021)
+            XCTAssert($0 != nil)
             s.signal()
         }
         s.wait()

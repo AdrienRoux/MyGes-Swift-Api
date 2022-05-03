@@ -22,6 +22,18 @@ public struct MyGes {
         }
     }
     
+    public static func getYears(completion: @escaping ([Int]?) -> Void) {
+        tryLogin {
+            if $0 {
+                APIService.shared.getYears {
+                    completion($0?.result)
+                }
+            } else {
+                completion(nil)
+            }
+        }
+    }
+    
     public static func getLastYear(completion: @escaping (Int?) -> Void) {
         tryLogin {
             if $0 {
