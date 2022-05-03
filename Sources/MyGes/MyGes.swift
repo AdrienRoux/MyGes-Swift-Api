@@ -190,7 +190,7 @@ public struct MyGes {
         }
     }
     
-    public static func quitProjectGroup(_ projectRcId: Int, _ projectId: Int, _ projectGroupId: Int, completion: @escaping (Bool) -> Void) {
+    public static func leaveProjectGroup(_ projectRcId: Int, _ projectId: Int, _ projectGroupId: Int, completion: @escaping (Bool) -> Void) {
         tryLogin {
             if $0 {
                 APIService.shared.quitProjectGroup(projectRcId, projectId, projectGroupId) {

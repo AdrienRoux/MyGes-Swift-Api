@@ -105,6 +105,7 @@ final class MyGesTests: XCTestCase {
         let s = DispatchSemaphore(value: 0)
         MyGes.getProjects {
             XCTAssert($0 != nil)
+            self.lastProject = $0?.last
             s.signal()
         }
         s.wait()
@@ -133,6 +134,28 @@ final class MyGesTests: XCTestCase {
         MyGes.getProject(id: 10302) {
             XCTAssert($0 != nil)
             s.signal()
+        }
+        s.wait()
+    }
+    
+    func testLeaveGroup() throws {
+        let s = DispatchSemaphore(value: 0)
+        MyGes.getProject(id: 10302) {
+            MyGes.leaveProjectGroup(($0?.rc_id)!, ($0?.project_id)!, ($0?.groups?.first?.project_group_id)!) {
+                XCTAssert($0 == true)
+                s.signal()
+            }
+        }
+        s.wait()
+    }
+    
+    func testLfJoinGroup() throws {
+        let s = DispatchSemaphore(value: 0)
+        MyGes.getProject(id: 10302) {
+            MyGes.joinProjectGroup(($0?.rc_id)!, ($0?.project_id)!, ($0?.groups?.first?.project_group_id)!) {
+                XCTAssert($0 == true)
+                s.signal()
+            }
         }
         s.wait()
     }

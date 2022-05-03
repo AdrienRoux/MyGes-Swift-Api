@@ -201,7 +201,7 @@ public class APIService {
             }
             
             URLSession.shared.dataTask(with: request) { data, response, error in
-//                print(String(data:data ?? Data(), encoding: .utf8)!)
+                //print(String(data:data ?? Data(), encoding: .utf8)!)
                 guard let data = data, let response = response as? HTTPURLResponse, error == nil else {// check for fundamental networking error
                     completion(.failure(APIError.HttpRequest))
                     return

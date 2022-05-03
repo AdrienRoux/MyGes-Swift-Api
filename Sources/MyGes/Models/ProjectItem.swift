@@ -21,7 +21,7 @@ struct GroupItem : Codable, Hashable {
     var links : [ProfileLink]?
     var groupe_name : String?
     var date_presentation : Int64?
-    var project_goup_id : Int?
+    var project_group_id : Int?
     var project_id : Int?
     var subject_id : Int?
     var subject_validated : Bool?
