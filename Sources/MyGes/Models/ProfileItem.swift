@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct ProfileLink : Codable, Hashable {
+public struct ProfileLink : Codable, Hashable {
     public var href: String?
     public var templated: Bool?
 }
 
-struct ProfileLinks : Codable {
+public struct ProfileLinks : Codable {
     public var years: ProfileLink?
     public var agenda: ProfileLink?
     public var grades: ProfileLink?
@@ -23,7 +23,7 @@ struct ProfileLinks : Codable {
     public var photo: ProfileLink?
 }
 
-struct EmergencyContact : Codable {
+public struct EmergencyContact : Codable {
     public var emergency_id: Int?
     public var type: String?
     public var type_details: String?
@@ -34,7 +34,7 @@ struct EmergencyContact : Codable {
     public var work_phone: String?
 }
 
-public struct ProfileItem : Codable {
+public public struct ProfileItem : Codable {
     public var uid: Int?
     public var student_id: String?
     public var ine: String?

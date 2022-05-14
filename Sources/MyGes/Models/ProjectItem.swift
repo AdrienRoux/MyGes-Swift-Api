@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct StudentGroupItem : Codable, Hashable {
+public struct StudentGroupItem : Codable, Hashable {
     public var name : String?
     public var firstname : String?
     public var promotion : String?
@@ -17,7 +17,7 @@ struct StudentGroupItem : Codable, Hashable {
     public var u_id : Int?
 }
 
-struct GroupItem : Codable, Hashable {
+public struct GroupItem : Codable, Hashable {
     public var links : [ProfileLink]?
     public var groupe_name : String?
     public var date_presentation : Int64?
@@ -30,7 +30,7 @@ struct GroupItem : Codable, Hashable {
     public var project_group_students : [StudentGroupItem]?
 }
 
-struct GroupLogItem : Codable, Hashable {
+public struct GroupLogItem : Codable, Hashable {
     public var links : [ProfileLink]?
     public var pgl_id : Int?
     public var pgl_author : String?
@@ -42,7 +42,7 @@ struct GroupLogItem : Codable, Hashable {
     public var pgr_id : Int?
 }
 
-struct ProjectFileItem : Codable, Hashable {
+public struct ProjectFileItem : Codable, Hashable {
     public var links: [ProfileLink]?
     public var pf_id: Int?
     public var pf_title: String?
@@ -51,7 +51,7 @@ struct ProjectFileItem : Codable, Hashable {
     public var pro_id: Int?
 }
 
-public struct ProjectItem : Codable, Hashable {
+public public struct ProjectItem : Codable, Hashable {
     public var project_id : Int?
     public var teacher_id : Int?
     public var author : String?

@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct AgendaRoom : Codable, Hashable {
+public struct AgendaRoom : Codable, Hashable {
     public var room_id: Int?
     public var name: String?
     public var floor: String?
@@ -19,7 +19,7 @@ struct AgendaRoom : Codable, Hashable {
     public var links: [String]?
 }
 
-struct AgendaDiscipline : Codable, Hashable {
+public struct AgendaDiscipline : Codable, Hashable {
     public var coef: Int?
     public var ects: Int?
     public var name: String?
@@ -38,7 +38,7 @@ struct AgendaDiscipline : Codable, Hashable {
     public var trimester_id: Int?
 }
 
-public struct AgendaItem : Codable, Hashable {
+public public struct AgendaItem : Codable, Hashable {
     public var reservation_id: Int?
     public var rooms: [AgendaRoom]?
     public var type: String?
