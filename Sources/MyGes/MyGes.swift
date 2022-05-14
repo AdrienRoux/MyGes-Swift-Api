@@ -38,7 +38,22 @@ public struct MyGes {
         tryLogin {
             if $0 {
                 APIService.shared.getYears {
-                    completion($0?.result?.first)
+					let formatter = DateFormatter()
+					formatter.dateFormat = "yyyy/MM/dd HH:mm"
+					let firstSeptember = formatter.date(from: Date.currentYear + "/09/01 00:00") ?? Date()
+					if Date().millisecondsSince1970 < firstSeptember.millisecondsSince1970 {
+						if let years = $0?.result {
+							if years.count >= 2 {
+								completion(years[1])
+							} else {
+								completion(years.first)
+							}
+						} else {
+							completion(nil)
+						}
+					} else {
+						completion($0?.result?.first)
+					}
                 }
             } else {
                 completion(nil)

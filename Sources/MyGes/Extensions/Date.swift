@@ -8,6 +8,10 @@
 import Foundation
 
 extension Date {
+	static var currentYear: String {
+		DateFormatter.year.string(from: Date())
+	}
+	
     mutating func add(type: Calendar.Component, _ value: Int) {
         self = Calendar.current.date(byAdding: type, value: value, to: self)!
     }
