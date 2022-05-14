@@ -9,51 +9,51 @@ import Foundation
 import SwiftUI
 
 struct AgendaRoom : Codable, Hashable {
-    var room_id: Int?
-    var name: String?
-    var floor: String?
-    var campus: String?
-    var color: String?
-    var latitude: String?
-    var longitude: String?
-    var links: [String]?
+    public var room_id: Int?
+    public var name: String?
+    public var floor: String?
+    public var campus: String?
+    public var color: String?
+    public var latitude: String?
+    public var longitude: String?
+    public var links: [String]?
 }
 
 struct AgendaDiscipline : Codable, Hashable {
-    var coef: Int?
-    var ects: Int?
-    var name: String?
-    var teacher: String?
-    var trimester: String?
-    var year: Int?
-    var has_documents: Bool?
-    var has_grades: Bool?
-    var nb_students: Int?
-    var rc_id: Int?
-    var school_id: Int?
-    var student_group_id: Int?
-    var student_group_name: String?
-    var syllabus_id: Int?
-    var teacher_id: Int?
-    var trimester_id: Int?
+    public var coef: Int?
+    public var ects: Int?
+    public var name: String?
+    public var teacher: String?
+    public var trimester: String?
+    public var year: Int?
+    public var has_documents: Bool?
+    public var has_grades: Bool?
+    public var nb_students: Int?
+    public var rc_id: Int?
+    public var school_id: Int?
+    public var student_group_id: Int?
+    public var student_group_name: String?
+    public var syllabus_id: Int?
+    public var teacher_id: Int?
+    public var trimester_id: Int?
 }
 
 public struct AgendaItem : Codable, Hashable {
-    var reservation_id: Int?
-    var rooms: [AgendaRoom]?
-    var type: String?
-    var modality: String?
-    var author: Int?
-    var create_date: Int64?
-    var start_date: Int64?
-    var end_date: Int64?
-    var state: String?
-    var comment: String?
-    var classes: [String]?
-    var name: String?
-    var discipline: AgendaDiscipline?
-    var teacher: String?
-    var promotion: String?
-    var prestation_type: Int?
-    var is_electronic_signature: Bool?
+    public var reservation_id: Int?
+    public var rooms: [AgendaRoom]?
+    public var type: String?
+    public var modality: String?
+    public var author: Int?
+    public var create_date: Int64?
+    public var start_date: Int64?
+    public var end_date: Int64?
+    public var state: String?
+    public var comment: String?
+    public var classes: [String]?
+    public var name: String?
+    public var discipline: AgendaDiscipline?
+    public var teacher: String?
+    public var promotion: String?
+    public var prestation_type: Int?
+    public var is_electronic_signature: Bool?
 }

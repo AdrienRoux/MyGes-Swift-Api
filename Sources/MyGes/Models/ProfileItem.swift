@@ -8,56 +8,56 @@
 import Foundation
 
 struct ProfileLink : Codable, Hashable {
-    var href: String?
-    var templated: Bool?
+    public var href: String?
+    public var templated: Bool?
 }
 
 struct ProfileLinks : Codable {
-    var years: ProfileLink?
-    var agenda: ProfileLink?
-    var grades: ProfileLink?
-    var classes: ProfileLink?
-    var courses: ProfileLink?
-    var teachers: ProfileLink?
-    var news: ProfileLink?
-    var photo: ProfileLink?
+    public var years: ProfileLink?
+    public var agenda: ProfileLink?
+    public var grades: ProfileLink?
+    public var classes: ProfileLink?
+    public var courses: ProfileLink?
+    public var teachers: ProfileLink?
+    public var news: ProfileLink?
+    public var photo: ProfileLink?
 }
 
 struct EmergencyContact : Codable {
-    var emergency_id: Int?
-    var type: String?
-    var type_details: String?
-    var firstname: String?
-    var name: String?
-    var telephone: String?
-    var mobile: String?
-    var work_phone: String?
+    public var emergency_id: Int?
+    public var type: String?
+    public var type_details: String?
+    public var firstname: String?
+    public var name: String?
+    public var telephone: String?
+    public var mobile: String?
+    public var work_phone: String?
 }
 
 public struct ProfileItem : Codable {
-    var uid: Int?
-    var student_id: String?
-    var ine: String?
-    var civility: String?
-    var firstname: String?
-    var name: String?
-    var maiden_name: String?
-    var birthday: Int64?
-    var birthplace: String?
-    var birth_country: String?
-    var address1: String?
-    var address2: String?
-    var city: String?
-    var zipcode: String?
-    var country: String?
-    var telephone: String?
-    var mobile: String?
-    var email: String?
-    var nationality: String?
-    var personal_mail: String?
-    var mailing: String?
-    var emergency_contact: EmergencyContact?
-    var _links: ProfileLinks?
+    public var uid: Int?
+    public var student_id: String?
+    public var ine: String?
+    public var civility: String?
+    public var firstname: String?
+    public var name: String?
+    public var maiden_name: String?
+    public var birthday: Int64?
+    public var birthplace: String?
+    public var birth_country: String?
+    public var address1: String?
+    public var address2: String?
+    public var city: String?
+    public var zipcode: String?
+    public var country: String?
+    public var telephone: String?
+    public var mobile: String?
+    public var email: String?
+    public var nationality: String?
+    public var personal_mail: String?
+    public var mailing: String?
+    public var emergency_contact: EmergencyContact?
+    public var _links: ProfileLinks?
 }
 
 extension ProfileItem {

@@ -8,66 +8,66 @@
 import Foundation
 
 struct AgendaResult : Codable {
-    var version: String?
-    var links: [ProfileLink]?
-    var response_code: Int?
-    var result: [AgendaItem]?
+    public var version: String?
+    public var links: [ProfileLink]?
+    public var response_code: Int?
+    public var result: [AgendaItem]?
 }
 
 struct ProfileResult : Codable {
-    var version: String?
-    var response_code: Int?
-    var result: ProfileItem?
+    public var version: String?
+    public var response_code: Int?
+    public var result: ProfileItem?
     
 }
 
 struct AbsenceResult : Codable {
-    var version : String?
-    var response_code : Int?
-    var links : [ProfileLink]?
-    var result : [AbsenceItem]?
+    public var version : String?
+    public var response_code : Int?
+    public var links : [ProfileLink]?
+    public var result : [AbsenceItem]?
 }
 
 struct YearsResult : Codable {
-    var version : String?
-    var response_code : Int?
-    var links : [ProfileLink]?
-    var result : [Int]?
+    public var version : String?
+    public var response_code : Int?
+    public var links : [ProfileLink]?
+    public var result : [Int]?
 }
 
 struct GradesResult : Codable {
-    var response_code: Int?
-    var version: String?
-    var result: [GradeItem]?
-    var links : [ProfileLink]?
+    public var response_code: Int?
+    public var version: String?
+    public var result: [GradeItem]?
+    public var links : [ProfileLink]?
 }
 
 struct CoursesResult : Codable {
-    var response_code: Int?
-    var version: String?
-    var result: [CourseItem]?
-    var links : [ProfileLink]?
+    public var response_code: Int?
+    public var version: String?
+    public var result: [CourseItem]?
+    public var links : [ProfileLink]?
 }
 
 struct ProjectsResult : Codable {
-    var response_code: Int?
-    var version: String?
-    var result: [ProjectItem]?
-    var links : [ProfileLink]?
+    public var response_code: Int?
+    public var version: String?
+    public var result: [ProjectItem]?
+    public var links : [ProfileLink]?
 }
 
 struct ProjectResult : Codable {
-    var response_code: Int?
-    var version: String?
-    var result: ProjectItem?
-    var links : [ProfileLink]?
+    public var response_code: Int?
+    public var version: String?
+    public var result: ProjectItem?
+    public var links : [ProfileLink]?
 }
 
 struct ProjectStepsResult : Codable {
-    var response_code: Int?
-    var version: String?
-    var result: [ProjectStepItem]?
-    var links : [ProfileLink]?
+    public var response_code: Int?
+    public var version: String?
+    public var result: [ProjectStepItem]?
+    public var links : [ProfileLink]?
 }
 
 

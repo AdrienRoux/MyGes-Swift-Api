@@ -8,12 +8,12 @@
 import Foundation
 
 public struct AbsenceItem : Codable, Hashable {
-    var date : Int64?
-    var course_name : String?
-    var justified : Bool?
-    var trimester : Int?
-    var trimester_name : String?
-    var type : String?
-    var year : Int?
-    var links : [ProfileLink]?
+    public var date : Int64?
+    public var course_name : String?
+    public var justified : Bool?
+    public var trimester : Int?
+    public var trimester_name : String?
+    public var type : String?
+    public var year : Int?
+    public var links : [ProfileLink]?
 }

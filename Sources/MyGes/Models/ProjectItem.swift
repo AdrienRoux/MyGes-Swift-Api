@@ -8,82 +8,82 @@
 import Foundation
 
 struct StudentGroupItem : Codable, Hashable {
-    var name : String?
-    var firstname : String?
-    var promotion : String?
-    var option : String?
-    var classe : String?
-    var links : [ProfileLink]?
-    var u_id : Int?
+    public var name : String?
+    public var firstname : String?
+    public var promotion : String?
+    public var option : String?
+    public var classe : String?
+    public var links : [ProfileLink]?
+    public var u_id : Int?
 }
 
 struct GroupItem : Codable, Hashable {
-    var links : [ProfileLink]?
-    var groupe_name : String?
-    var date_presentation : Int64?
-    var project_group_id : Int?
-    var project_id : Int?
-    var subject_id : Int?
-    var subject_validated : Bool?
-    var teacher_comment : String?
-    var teacher_intern_comment : String?
-    var project_group_students : [StudentGroupItem]?
+    public var links : [ProfileLink]?
+    public var groupe_name : String?
+    public var date_presentation : Int64?
+    public var project_group_id : Int?
+    public var project_id : Int?
+    public var subject_id : Int?
+    public var subject_validated : Bool?
+    public var teacher_comment : String?
+    public var teacher_intern_comment : String?
+    public var project_group_students : [StudentGroupItem]?
 }
 
 struct GroupLogItem : Codable, Hashable {
-    var links : [ProfileLink]?
-    var pgl_id : Int?
-    var pgl_author : String?
-    var pgl_role_user : String?
-    var pgl_describe : String?
-    var pgl_date : Int64?
-    var pgl_type_action : String?
-    var user_id : Int?
-    var pgr_id : Int?
+    public var links : [ProfileLink]?
+    public var pgl_id : Int?
+    public var pgl_author : String?
+    public var pgl_role_user : String?
+    public var pgl_describe : String?
+    public var pgl_date : Int64?
+    public var pgl_type_action : String?
+    public var user_id : Int?
+    public var pgr_id : Int?
 }
 
 struct ProjectFileItem : Codable, Hashable {
-    var links: [ProfileLink]?
-    var pf_id: Int?
-    var pf_title: String?
-    var pf_file: String?
-    var pf_crea_date: Int64?
-    var pro_id: Int?
+    public var links: [ProfileLink]?
+    public var pf_id: Int?
+    public var pf_title: String?
+    public var pf_file: String?
+    public var pf_crea_date: Int64?
+    public var pro_id: Int?
 }
 
 public struct ProjectItem : Codable, Hashable {
-    var project_id : Int?
-    var teacher_id : Int?
-    var author : String?
-    var name : String?
-    var update_date : Int64?
-    var update_user : String?
-    var course_name : String?
-    var discipline_id : Int?
-    var groups : [GroupItem]?
-    var steps : [ProjectStepItem]?
-    var project_files : [ProjectFileItem]?
-    var project_group_logs : [GroupLogItem]?
-    var is_draft : Bool?
-    var project_type_id : Int?
-    var project_computing_tools : String?
-    var project_date : Int64?
-    var project_detail_plan : String?
-    var project_hearing_presentation : String?
-    var project_max_student_group : Int?
-    var project_min_student_group : Int?
-    var project_personnal_work : Int?
-    var project_presentation_duration : Int?
-    var project_ref_books : String?
-    var project_teaching_goals : String?
-    var project_type_group : String?
-    var project_type_presentation : String?
-    var project_type_presentation_details : String?
-    var project_type_subject : String?
-    var rc_id : Int?
-    var trimester_id : Int?
-    var year : Int?
-    var links : [ProfileLink]?
+    public var project_id : Int?
+    public var teacher_id : Int?
+    public var author : String?
+    public var name : String?
+    public var update_date : Int64?
+    public var update_user : String?
+    public var course_name : String?
+    public var discipline_id : Int?
+    public var groups : [GroupItem]?
+    public var steps : [ProjectStepItem]?
+    public var project_files : [ProjectFileItem]?
+    public var project_group_logs : [GroupLogItem]?
+    public var is_draft : Bool?
+    public var project_type_id : Int?
+    public var project_computing_tools : String?
+    public var project_date : Int64?
+    public var project_detail_plan : String?
+    public var project_hearing_presentation : String?
+    public var project_max_student_group : Int?
+    public var project_min_student_group : Int?
+    public var project_personnal_work : Int?
+    public var project_presentation_duration : Int?
+    public var project_ref_books : String?
+    public var project_teaching_goals : String?
+    public var project_type_group : String?
+    public var project_type_presentation : String?
+    public var project_type_presentation_details : String?
+    public var project_type_subject : String?
+    public var rc_id : Int?
+    public var trimester_id : Int?
+    public var year : Int?
+    public var links : [ProfileLink]?
 }
 
 extension ProjectItem {
