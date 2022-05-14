@@ -34,7 +34,7 @@ public struct EmergencyContact : Codable {
     public var work_phone: String?
 }
 
-public public struct ProfileItem : Codable {
+public struct ProfileItem : Codable {
     public var uid: Int?
     public var student_id: String?
     public var ine: String?

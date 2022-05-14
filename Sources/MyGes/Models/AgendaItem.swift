@@ -38,7 +38,7 @@ public struct AgendaDiscipline : Codable, Hashable {
     public var trimester_id: Int?
 }
 
-public public struct AgendaItem : Codable, Hashable {
+public struct AgendaItem : Codable, Hashable {
     public var reservation_id: Int?
     public var rooms: [AgendaRoom]?
     public var type: String?
