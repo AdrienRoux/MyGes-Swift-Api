@@ -83,3 +83,11 @@ extension Date {
         return futureDate
     }
 }
+
+extension DateFormatter {
+	static var year: DateFormatter {
+		let formatter = DateFormatter()
+		formatter.dateFormat = "yyyy"
+		return formatter
+	}
+}
