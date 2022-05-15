@@ -1,7 +1,6 @@
 import Foundation
 
-@available(macOS 10.15, *)
-public class MyGes: ObservableObject {
+public struct MyGes {
     public static var credentials: Credentials?
     public static var saveCredentials: Bool = false
     
