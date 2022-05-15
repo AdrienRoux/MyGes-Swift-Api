@@ -16,7 +16,7 @@ public struct StudentGroupItem : Codable, Hashable {
     public var links : [ProfileLink]?
     public var u_id : Int?
 	
-	public init(name: String?, firstname: String?, promotion: String?, option: String?, classe: String?, links: [ProfileLinks]?, u_id: Int?) {
+	public init(name: String?, firstname: String?, promotion: String?, option: String?, classe: String?, links: [ProfileLink]?, u_id: Int?) {
 		self.name = name
 		self.firstname = firstname
 		self.promotion = promotion
@@ -39,7 +39,7 @@ public struct GroupItem : Codable, Hashable {
     public var teacher_intern_comment : String?
     public var project_group_students : [StudentGroupItem]?
 	
-	public init(links: [ProfileLinks]?, groupe_name: String?, date_presentation: Int64?, project_group_id: Int?, project_id: Int?, subject_id: Int?, subject_validated: Bool?, teacher_comment: String?, teacher_intern_comment: String?, project_group_students: [StudentGroupItem]?) {
+	public init(links: [ProfileLink]?, groupe_name: String?, date_presentation: Int64?, project_group_id: Int?, project_id: Int?, subject_id: Int?, subject_validated: Bool?, teacher_comment: String?, teacher_intern_comment: String?, project_group_students: [StudentGroupItem]?) {
 		self.links = links
 		self.groupe_name = groupe_name
 		self.date_presentation = date_presentation
