@@ -60,8 +60,8 @@ public struct ProfileItem : Codable {
     public var _links: ProfileLinks?
 }
 
-extension ProfileItem {
-    static func stub() -> ProfileItem {
+public extension ProfileItem {
+    public static func stub() -> ProfileItem {
         return ProfileItem(uid: nil, student_id: "", ine: "", civility: "", firstname: "John", name: "Appleseed", maiden_name: "", birthday: Int64(Date().millisecondsSince1970), birthplace: "Paris", birth_country: "France", address1: "242 Rue du Faubourg Saint-Antoine", address2: "", city: "Paris", zipcode: "75012", country: "France", telephone: "0123456789", mobile: "0123456789", email: "email@myges.fr", nationality: "Francais", personal_mail: "email@gmail.com", mailing: "", emergency_contact: EmergencyContact(emergency_id: nil, type: "Père", type_details: "", firstname: "John", name: "Appleseed", telephone: "0123456789", mobile: "0123456789", work_phone: "0123456789"), _links: ProfileLinks(years: nil, agenda: nil, grades: nil, classes: nil, courses: nil, teachers: nil, news: nil, photo: ProfileLink(href: "https://images.unsplash.com/photo-1599625042924-a22b68c0e39a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1287&q=80", templated: nil)))
     }
 }
