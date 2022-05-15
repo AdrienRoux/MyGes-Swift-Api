@@ -15,6 +15,16 @@ public struct StudentGroupItem : Codable, Hashable {
     public var classe : String?
     public var links : [ProfileLink]?
     public var u_id : Int?
+	
+	public init(name: String?, firstname: String?, promotion: String?, option: String?, classe: String?, links: [ProfileLinks]?, u_id: Int?) {
+		self.name = name
+		self.firstname = firstname
+		self.promotion = promotion
+		self.option = option
+		self.classe = classe
+		self.links = links
+		self.u_id = u_id
+	}
 }
 
 public struct GroupItem : Codable, Hashable {
@@ -28,6 +38,19 @@ public struct GroupItem : Codable, Hashable {
     public var teacher_comment : String?
     public var teacher_intern_comment : String?
     public var project_group_students : [StudentGroupItem]?
+	
+	public init(links: [ProfileLinks]?, groupe_name: String?, date_presentation: Int64?, project_group_id: Int?, project_id: Int?, subject_id: Int?, subject_validated: Bool?, teacher_comment: String?, teacher_intern_comment: String?, project_group_students: [StudentGroupItem]?) {
+		self.links = links
+		self.groupe_name = groupe_name
+		self.date_presentation = date_presentation
+		self.project_group_id = project_group_id
+		self.project_id = project_id
+		self.subject_id = subject_id
+		self.subject_validated = subject_validated
+		self.teacher_comment = teacher_comment
+		self.teacher_intern_comment = teacher_intern_comment
+		self.project_group_students = project_group_students
+	}
 }
 
 public struct GroupLogItem : Codable, Hashable {
