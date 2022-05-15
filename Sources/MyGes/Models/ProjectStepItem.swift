@@ -21,8 +21,8 @@ public struct ProjectStepItem : Codable, Hashable {
     public var links : [ProfileLink]?
 }
 
-extension ProjectStepItem {
-    static func stub() -> ProjectStepItem {
+public extension ProjectStepItem {
+    public static func stub() -> ProjectStepItem {
         return ProjectStepItem(course_name: nil, group_id: nil, pro_id: nil, pro_name: nil, psp_desc: nil, psp_id: nil, psp_limit_date: 000000000, psp_number: nil, psp_type: nil, type: nil, links: nil)
     }
 }
