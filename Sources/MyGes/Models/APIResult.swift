@@ -7,63 +7,63 @@
 
 import Foundation
 
-struct AgendaResult : Codable {
+public struct AgendaResult : Codable {
     public var version: String?
     public var links: [ProfileLink]?
     public var response_code: Int?
     public var result: [AgendaItem]?
 }
 
-struct ProfileResult : Codable {
+public struct ProfileResult : Codable {
     public var version: String?
     public var response_code: Int?
     public var result: ProfileItem?
     
 }
 
-struct AbsenceResult : Codable {
+public struct AbsenceResult : Codable {
     public var version : String?
     public var response_code : Int?
     public var links : [ProfileLink]?
     public var result : [AbsenceItem]?
 }
 
-struct YearsResult : Codable {
+public struct YearsResult : Codable {
     public var version : String?
     public var response_code : Int?
     public var links : [ProfileLink]?
     public var result : [Int]?
 }
 
-struct GradesResult : Codable {
+public struct GradesResult : Codable {
     public var response_code: Int?
     public var version: String?
     public var result: [GradeItem]?
     public var links : [ProfileLink]?
 }
 
-struct CoursesResult : Codable {
+public struct CoursesResult : Codable {
     public var response_code: Int?
     public var version: String?
     public var result: [CourseItem]?
     public var links : [ProfileLink]?
 }
 
-struct ProjectsResult : Codable {
+public struct ProjectsResult : Codable {
     public var response_code: Int?
     public var version: String?
     public var result: [ProjectItem]?
     public var links : [ProfileLink]?
 }
 
-struct ProjectResult : Codable {
+public struct ProjectResult : Codable {
     public var response_code: Int?
     public var version: String?
     public var result: ProjectItem?
     public var links : [ProfileLink]?
 }
 
-struct ProjectStepsResult : Codable {
+public struct ProjectStepsResult : Codable {
     public var response_code: Int?
     public var version: String?
     public var result: [ProjectStepItem]?
