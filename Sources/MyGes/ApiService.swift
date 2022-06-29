@@ -160,13 +160,19 @@ public class APIService {
         request.addValue("Basic \(tokenCredentials)", forHTTPHeaderField: "Authorization")
         
         URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let _ = data, error == nil else {
+            guard let _ = data, let response = response as? HTTPURLResponse, error == nil else {
                 if error.debugDescription.contains("Code=-1009") {
                     return completion(APIError.NoInternet)
                 } else {
                     return completion(error!)
                 }
             }
+			
+			if (500 ... 511).contains(response.statusCode) { // check for server errors
+				completion(APIError.HttpRequest)
+				return
+			}
+			
             completion(APIError.NotFound)
         }.resume()
     }
