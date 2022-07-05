@@ -110,13 +110,13 @@ public struct ProjectItem : Codable, Hashable {
 }
 
 public extension ProjectItem {
-    public static func stub() -> ProjectItem{
+    static func stub() -> ProjectItem{
         return ProjectItem(project_id: nil, teacher_id: nil, author: nil, name: "Project Name", update_date: nil, update_user: nil, course_name: "Exemple de cours", discipline_id: nil, groups: nil, steps: [ProjectStepItem.stub(), ProjectStepItem.stub()], project_files: nil, project_group_logs: [GroupLogItem.stub(), GroupLogItem.stub(), GroupLogItem.stub()], is_draft: nil, project_type_id: nil, project_computing_tools: nil, project_date: nil, project_detail_plan: nil, project_hearing_presentation: nil, project_max_student_group: nil, project_min_student_group: nil, project_personnal_work: nil, project_presentation_duration: nil, project_ref_books: nil, project_teaching_goals: nil, project_type_group: nil, project_type_presentation: nil, project_type_presentation_details: nil, project_type_subject: nil, rc_id: nil, trimester_id: nil, year: nil, links: nil)
     }
 }
 
 public extension GroupLogItem {
-    public static func stub() -> GroupLogItem {
+    static func stub() -> GroupLogItem {
         return GroupLogItem(links: nil, pgl_id: 0, pgl_author: nil, pgl_role_user: nil, pgl_describe: "Example text for group log", pgl_date: 0, pgl_type_action: nil, user_id: nil, pgr_id: nil)
     }
 }
