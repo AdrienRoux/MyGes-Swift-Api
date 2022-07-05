@@ -1,6 +1,5 @@
 import Foundation
 
-@frozen
 public struct MyGes {
     public static var credentials: Credentials?
     public static var saveCredentials: Bool = false
