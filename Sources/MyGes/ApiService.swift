@@ -83,24 +83,31 @@ public class APIService {
     }
     
     private func getCAS(_ params: [String:String], completion: @escaping ([String: String]?) -> Void) {
-		print(credentials?.username, credentials?.password)
         let parameters = "username=\(credentials?.username ?? "")&password=\(credentials?.password ?? "")&lt=\(params["lt"]!)&execution=\(params["execution"]!)&_eventId=submit"
         let postData =  parameters.data(using: .utf8)
+		print(parameters)
+		print(postData)
         
         var request = URLRequest(url: URL(string: "https://ges-cas.kordis.fr/login?service=https%3A%2F%2Fmyges.fr%2Fj_spring_cas_security_check")!,timeoutInterval: Double.infinity)
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+		
         if params["cookie"] != nil {
             request.addValue(params["cookie"]!, forHTTPHeaderField: "Cookie")
+			print("add cookie")
         }
         
         request.httpMethod = "POST"
         request.httpBody = postData
         
         URLSession.shared.dataTask(with: request) { data, response, error in
+			print("data", data)
+			print("response", response)
+			print("error", error)
             guard data != nil else { return completion(nil) }
             if let cookie = HTTPCookieStorage.shared.cookies?.first(where: { $0.name == "CASTGC" }) {
                 var returnedParams = params
                 returnedParams["cas"] = cookie.value
+				print(returnedParams)
                 completion(returnedParams)
             }
         }.resume()
