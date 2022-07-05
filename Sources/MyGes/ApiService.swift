@@ -124,10 +124,13 @@ public class APIService {
     
     func getProfilePictureLink(completion: @escaping (String?) -> Void) {
         getAuthPageToken {
-            if $0 != nil {
-                self.getCAS($0!) {
-                    if $0 != nil {
-                        self.getLinkFromCAS($0!) { link in
+			print("Token fetched.")
+            if let token = $0 {
+                self.getCAS(token) {
+					print("CAS fetched.")
+                    if let cas = $0 {
+                        self.getLinkFromCAS(cas) { link in
+							print("Link ok : \(link ?? "")")
                             completion(link)
                         }
                     } else {
