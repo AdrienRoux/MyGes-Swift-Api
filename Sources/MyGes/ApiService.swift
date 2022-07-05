@@ -85,30 +85,22 @@ public class APIService {
     private func getCAS(_ params: [String:String], completion: @escaping ([String: String]?) -> Void) {
 		let parameters = "username=\(credentials?.username.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? "")&password=\(credentials?.password.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? "")&lt=\(params["lt"]!)&execution=\(params["execution"]!)&_eventId=submit"
         let postData =  parameters.data(using: .utf8)
-		print(parameters)
-		print(postData)
         
         var request = URLRequest(url: URL(string: "https://ges-cas.kordis.fr/login?service=https%3A%2F%2Fmyges.fr%2Fj_spring_cas_security_check")!,timeoutInterval: Double.infinity)
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 		
         if params["cookie"] != nil {
             request.addValue(params["cookie"]!, forHTTPHeaderField: "Cookie")
-			print("add cookie")
         }
         
         request.httpMethod = "POST"
         request.httpBody = postData
         
         URLSession.shared.dataTask(with: request) { data, response, error in
-			print("data", String(data: data!, encoding: .utf8))
-			print("response", response)
-			print("error", error)
             guard data != nil else { return completion(nil) }
-			print(HTTPCookieStorage.shared.cookies)
             if let cookie = HTTPCookieStorage.shared.cookies?.first(where: { $0.name == "CASTGC" }) {
                 var returnedParams = params
                 returnedParams["cas"] = cookie.value
-				print(returnedParams)
                 completion(returnedParams)
             }
         }.resume()
@@ -133,13 +125,10 @@ public class APIService {
     
     func getProfilePictureLink(completion: @escaping (String?) -> Void) {
         getAuthPageToken {
-			print("Token fetched : \($0)")
             if let token = $0 {
                 self.getCAS(token) {
-					print("CAS fetched : \($0)")
                     if let cas = $0 {
                         self.getLinkFromCAS(cas) { link in
-							print("Link ok : \(link ?? "")")
                             completion(link)
                         }
                     } else {
@@ -219,7 +208,6 @@ public class APIService {
             }
             
             URLSession.shared.dataTask(with: request) { data, response, error in
-                //print(String(data:data ?? Data(), encoding: .utf8)!)
                 guard let data = data, let response = response as? HTTPURLResponse, error == nil else {// check for fundamental networking error
                     completion(.failure(APIError.HttpRequest))
                     return
