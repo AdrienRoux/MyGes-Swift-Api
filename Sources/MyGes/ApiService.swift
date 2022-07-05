@@ -83,7 +83,7 @@ public class APIService {
     }
     
     private func getCAS(_ params: [String:String], completion: @escaping ([String: String]?) -> Void) {
-        let parameters = "username=\(credentials?.username ?? "")&password=\(credentials?.password ?? "")&lt=\(params["lt"]!)&execution=\(params["execution"]!)&_eventId=submit"
+		let parameters = "username=\(credentials?.username.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? "")&password=\(credentials?.password.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? "")&lt=\(params["lt"]!)&execution=\(params["execution"]!)&_eventId=submit"
         let postData =  parameters.data(using: .utf8)
 		print(parameters)
 		print(postData)
