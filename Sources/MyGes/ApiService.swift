@@ -100,7 +100,7 @@ public class APIService {
         request.httpBody = postData
         
         URLSession.shared.dataTask(with: request) { data, response, error in
-			print("data", data)
+			print("data", String(data: data!, encoding: .utf8))
 			print("response", response)
 			print("error", error)
             guard data != nil else { return completion(nil) }
