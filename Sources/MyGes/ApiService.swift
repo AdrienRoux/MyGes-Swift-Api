@@ -104,6 +104,7 @@ public class APIService {
 			print("response", response)
 			print("error", error)
             guard data != nil else { return completion(nil) }
+			print(HTTPCookieStorage.shared.cookies)
             if let cookie = HTTPCookieStorage.shared.cookies?.first(where: { $0.name == "CASTGC" }) {
                 var returnedParams = params
                 returnedParams["cas"] = cookie.value
