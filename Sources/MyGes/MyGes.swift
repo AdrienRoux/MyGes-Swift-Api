@@ -13,7 +13,6 @@ public struct MyGes {
                 case .success:
                     completion(nil)
                 case .failure(let error):
-					MyGes.credentials = nil
                     completion(error)
                 }
             }
