@@ -235,8 +235,8 @@ public struct MyGes {
     }
     
     private static func tryLogin(completion: @escaping (Bool) -> Void) {
-        if credentials != nil {
-            APIService.shared.login(credentials!, saveCredentials: saveCredentials) { result in
+		if MyGes.credentials != nil {
+			APIService.shared.login(MyGes.credentials!, saveCredentials: saveCredentials) { result in
                 switch result {
                 case .success:
                     completion(true)
