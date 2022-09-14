@@ -17,6 +17,7 @@ public enum APIError: Error {
 	case ServerError
     case HttpRequest
     case NoInternet
+	case NoContent
 }
 
 public struct AccessToken {
@@ -43,7 +44,7 @@ public class APIService {
 		guard let url = URL(string: "https://authentication.kordis.fr/oauth/authorize?response_type=token&client_id=skolae-app") else {
 			return completion(.failure(.HttpRequest))
 		}
-		var request = URLRequest(url: url )
+		var request = URLRequest(url: url)
 		request.addValue("Basic \(tokenCredentials)", forHTTPHeaderField: "Authorization")
 		
 		URLSession.shared.dataTask(with: request) { data, response, error in
@@ -102,7 +103,7 @@ public class APIService {
 	}
     
     private func getAuthPageToken(completion: @escaping ([String: String]?) -> Void) {
-        self.request("POST", "https://ges-cas.kordis.fr/login", [:], false) { (result : Result<Data, Error>) in
+        self.request("POST", "https://ges-cas.kordis.fr/login", [:], false) { (result : Result<Data, APIError>) in
             switch result {
             case .success(let success):
 				var result = [String: String]()
@@ -130,8 +131,9 @@ public class APIService {
 		guard let username = credentials.username.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else { return completion(nil) }
 		guard let password = credentials.password.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else { return completion(nil) }
 		guard let url = URL(string: "https://ges-cas.kordis.fr/login?service=https%3A%2F%2Fmyges.fr%2Fj_spring_cas_security_check") else { return completion(nil) }
+		guard let lt = params["lt"], let execution = params["execution"] else { return completion(nil) }
 		
-		let parameters = "username=\(username)&password=\(password)&lt=\(params["lt"]!)&execution=\(params["execution"]!)&_eventId=submit"
+		let parameters = "username=\(username)&password=\(password)&lt=\(lt)&execution=\(execution)&_eventId=submit"
         let postData =  parameters.data(using: .utf8)
         
         var request = URLRequest(url: url, timeoutInterval: Double.infinity)
@@ -213,9 +215,14 @@ public class APIService {
             switch result {
             case .success(let data):
                 completion(data.decodeAsClass())
-            case .failure(_):
-                print("There was an error fetching absences")
-                completion(nil)
+            case .failure(let error):
+				if error == .NoContent {
+					print("There is no absences.")
+					completion(AbsenceResult(result: []))
+				} else {
+					print("There was an error fetching absences")
+					completion(nil)
+				}
             }
         }
     }
@@ -249,9 +256,14 @@ public class APIService {
             switch result {
             case .success(let data):
                 completion(data.decodeAsClass())
-            case .failure(_):
-                print("There was an error fetching projects")
-                completion(nil)
+            case .failure(let error):
+				if error == .NoContent {
+					print("There is no projects.")
+					completion(ProjectsResult(result: []))
+				} else {
+					print("There was an error fetching projects")
+					completion(nil)
+				}
             }
         }
     }
@@ -261,9 +273,14 @@ public class APIService {
             switch result {
             case .success(let data):
                 completion(data.decodeAsClass())
-            case .failure(_):
-                print("There was an error fetching next project steps")
-                completion(nil)
+            case .failure(let error):
+				if error == .NoContent {
+					print("There is no steps.")
+					completion(ProjectStepsResult(result: []))
+				} else {
+					print("There was an error fetching next project steps")
+					completion(nil)
+				}
             }
         }
     }
@@ -310,7 +327,7 @@ public class APIService {
     //        return self.post("/me/projectGroups/\(projectGroupId)/messages", ["projectGroupId":  projectGroupId, "message": message])
     //    }
 	
-	private func request(_ method: String, _ urlString: String, _ parameters: [String: Any] = [:], _ isKordisApi : Bool = true, completion: @escaping(Result<Data, Error>) -> Void) {
+	private func request(_ method: String, _ urlString: String, _ parameters: [String: Any] = [:], _ isKordisApi : Bool = true, completion: @escaping(Result<Data, APIError>) -> Void) {
 		if (token != nil && isKordisApi) ||  !isKordisApi {
 			let url = URL(string: (isKordisApi ? "https://api.kordis.fr" : "") +  "\(urlString)")!
 			var request = URLRequest(url: url)
@@ -327,40 +344,45 @@ public class APIService {
 			
 			URLSession.shared.dataTask(with: request) { data, response, error in
 				guard let data = data, let response = response as? HTTPURLResponse, error == nil else {// check for fundamental networking error
-					completion(.failure(APIError.HttpRequest))
+					completion(.failure(.HttpRequest))
 					return
 				}
 				
 				guard (200 ... 299) ~= response.statusCode else { // check for http errors
-					completion(.failure(APIError.HttpRequest))
+					completion(.failure(.HttpRequest))
+					return
+				}
+				
+				if response.statusCode == 204 {
+					completion(.failure(.NoContent))
 					return
 				}
 				completion(.success(data))
 			}.resume()
 		} else {
-			completion(.failure(APIError.NoInternet))
+			completion(.failure(.NoInternet))
 		}
 	}
     
-    private func get(_ url: String, completion: @escaping(Result<Data, Error>) -> Void) {
+    private func get(_ url: String, completion: @escaping(Result<Data, APIError>) -> Void) {
         self.request("GET", url) { result in
             completion(result)
         }
     }
     
-    private func post(_ url: String, _ parameters: [String: Any] = [:], completion: @escaping(Result<Data, Error>) -> Void) {
+    private func post(_ url: String, _ parameters: [String: Any] = [:], completion: @escaping(Result<Data, APIError>) -> Void) {
         self.request("POST", url, parameters) { result in
             completion(result)
         }
     }
     
-    private func put(_ url: String, _ parameters: [String: Any] = [:], completion: @escaping(Result<Data, Error>) -> Void) {
+    private func put(_ url: String, _ parameters: [String: Any] = [:], completion: @escaping(Result<Data, APIError>) -> Void) {
         self.request("PUT", url, parameters) { result in
             completion(result)
         }
     }
     
-    private func delete(_ url: String, completion: @escaping(Result<Data, Error>) -> Void) {
+    private func delete(_ url: String, completion: @escaping(Result<Data, APIError>) -> Void) {
         self.request("DELETE", url) { result in
             completion(result)
         }
