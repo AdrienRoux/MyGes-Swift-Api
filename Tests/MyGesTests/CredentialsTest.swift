@@ -9,19 +9,11 @@ import XCTest
 @testable import MyGes
 
 class CredentialsTest: XCTestCase {
-    func testNoCredentials() throws {
-        let s = DispatchSemaphore(value: 0)
-        MyGes.login {
-            XCTAssert($0 == APIError.NotFound)
-            s.signal()
-        }
-        s.wait()
-    }
 
     func testCredentialsError() throws {
-        MyGes.credentials = Credentials(username: "", password: "")
+		let credentials = Credentials(username: "", password: "")
         let s = DispatchSemaphore(value: 0)
-        MyGes.login {
+        MyGes.login(credentials) {
             XCTAssert($0 == APIError.NotFound)
             s.signal()
         }

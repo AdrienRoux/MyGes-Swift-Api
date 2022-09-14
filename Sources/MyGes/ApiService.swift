@@ -14,6 +14,7 @@ import FoundationNetworking
 
 public enum APIError: Error {
     case NotFound
+	case ServerError
     case HttpRequest
     case NoInternet
 }
@@ -37,44 +38,87 @@ public class APIService {
     var credentials: Credentials?
     var token: GesAuthenticationToken?
     
-    func login(_ credentials: Credentials, saveCredentials: Bool = false, completion: @escaping (Result<Bool, APIError>) -> Void) {
-        generateAccessToken(credentials) { (result: Result<AccessToken, APIError>) in
-            switch result {
-            case .success(let receivedToken):
-                self.credentials = credentials
-                self.token = GesAuthenticationToken(accessToken: receivedToken.accessToken, tokenType: receivedToken.tokenType)
-                
-                if saveCredentials {
-                    UserDefaults.standard.set(credentials.username, forKey: "username")
-                    UserDefaults.standard.set(credentials.password, forKey: "password")
-                }
-                
-                completion(.success(true))
-            case .failure (let error):
-                completion(.failure(error))
-            }
-        }
+    func login(_ credentials: Credentials, completion: @escaping (Result<Bool, APIError>) -> Void) {
+		let tokenCredentials = "\(credentials.username.lowercased()):\(credentials.password)".toBase64
+		guard let url = URL(string: "https://authentication.kordis.fr/oauth/authorize?response_type=token&client_id=skolae-app") else {
+			return completion(.failure(.HttpRequest))
+		}
+		var request = URLRequest(url: url )
+		request.addValue("Basic \(tokenCredentials)", forHTTPHeaderField: "Authorization")
+		
+		URLSession.shared.dataTask(with: request) { data, response, error in
+			guard let _ = data, let response = response as? HTTPURLResponse, error == nil else {
+				if error.debugDescription.contains("Code=-1009") {
+					return completion(.failure(.NoInternet))
+				} else {
+					guard let error = error else {
+						completion(.failure(.HttpRequest))
+						return
+					}
+					self.credentials = credentials
+					guard let errorToken = self.convertErrorToAccessToken(error as NSError) else { return completion(.failure(.HttpRequest))}
+					self.token = GesAuthenticationToken(accessToken: errorToken.accessToken, tokenType: errorToken.tokenType)
+					return completion(.success(true))
+				}
+			}
+			
+			if (500 ... 511).contains(response.statusCode) {
+				completion(.failure(.ServerError))
+				return
+			}
+			
+			completion(.failure(.NotFound))
+		}.resume()
     }
+	
+	private func convertErrorToAccessToken(_ error: NSError) -> AccessToken? {
+		guard let accessUrl = error.userInfo["NSErrorFailingURLStringKey"] as? String else { return nil }
+		
+		var urlElements = (accessUrl as NSString).components(separatedBy: "&")
+		
+		urlElements[0] = urlElements[0].components(separatedBy: "#")[1]
+		
+		for i in 0..<urlElements.count { urlElements[i] = urlElements[i].components(separatedBy: "=")[1] }
+		
+		return AccessToken(accessToken: urlElements[0], tokenType: urlElements[1], expiresIn: urlElements[2], scope: urlElements[3], uid: "")
+	}
+	
+	func getProfilePictureLink(completion: @escaping (String?) -> Void) {
+		getAuthPageToken { [weak self] in
+			if let token = $0, let credentials = self?.credentials, !token.isEmpty {
+				self?.getCAS(credentials, token) {
+					if let cas = $0 {
+						self?.getLinkFromCAS(cas) { link in
+							completion(link)
+						}
+					} else {
+						completion(nil)
+					}
+				}
+			} else {
+				completion(nil)
+			}
+		}
+	}
     
     private func getAuthPageToken(completion: @escaping ([String: String]?) -> Void) {
         self.request("POST", "https://ges-cas.kordis.fr/login", [:], false) { (result : Result<Data, Error>) in
             switch result {
             case .success(let success):
-                
-                let html = String(data: success, encoding: .utf8)!
-                var lt : String?
+				var result = [String: String]()
+				guard let html = String(data: success, encoding: .utf8) else { return completion(nil) }
+				
                 if html.contains("name=\"lt\" value=\"") {
-                    lt = html.components(separatedBy: "name=\"lt\" value=\"")[1].components(separatedBy: "\"/>")[0]
+					result["lt"] = html.components(separatedBy: "name=\"lt\" value=\"")[1].components(separatedBy: "\"/>")[0]
                 }
-                var execution : String?
                 if html.contains("name=\"execution\" value=\"") {
-                    execution = html.components(separatedBy: "name=\"execution\" value=\"")[1].components(separatedBy: "\"/>")[0]
+					result["execution"] = html.components(separatedBy: "name=\"execution\" value=\"")[1].components(separatedBy: "\"/>")[0]
                 }
-                var cookieString: String?
                 if let cookie = HTTPCookieStorage.shared.cookies?.first(where: { $0.name == "JSESSIONID" && $0.domain == "ges-cas.kordis.fr" }) {
-                    cookieString = "\(cookie.name)=\(cookie.value)"
+					result["cookie"] = "\(cookie.name)=\(cookie.value)"
                 }
-                completion(["lt" : lt ?? "", "execution": execution ?? "", "cookie": cookieString ?? ""])
+				
+                completion(result)
                 
             case .failure:
                 completion(nil)
@@ -82,15 +126,19 @@ public class APIService {
         }
     }
     
-    private func getCAS(_ params: [String:String], completion: @escaping ([String: String]?) -> Void) {
-		let parameters = "username=\(credentials?.username.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? "")&password=\(credentials?.password.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? "")&lt=\(params["lt"]!)&execution=\(params["execution"]!)&_eventId=submit"
+    private func getCAS(_ credentials: Credentials, _ params: [String:String], completion: @escaping ([String: String]?) -> Void) {
+		guard let username = credentials.username.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else { return completion(nil) }
+		guard let password = credentials.password.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else { return completion(nil) }
+		guard let url = URL(string: "https://ges-cas.kordis.fr/login?service=https%3A%2F%2Fmyges.fr%2Fj_spring_cas_security_check") else { return completion(nil) }
+		
+		let parameters = "username=\(username)&password=\(password)&lt=\(params["lt"]!)&execution=\(params["execution"]!)&_eventId=submit"
         let postData =  parameters.data(using: .utf8)
         
-        var request = URLRequest(url: URL(string: "https://ges-cas.kordis.fr/login?service=https%3A%2F%2Fmyges.fr%2Fj_spring_cas_security_check")!,timeoutInterval: Double.infinity)
+        var request = URLRequest(url: url, timeoutInterval: Double.infinity)
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 		
-        if params["cookie"] != nil {
-            request.addValue(params["cookie"]!, forHTTPHeaderField: "Cookie")
+        if let cookie = params["cookie"] {
+            request.addValue(cookie, forHTTPHeaderField: "Cookie")
         }
         
         request.httpMethod = "POST"
@@ -109,8 +157,9 @@ public class APIService {
     private func getLinkFromCAS(_ params: [String: String], completion: @escaping (String?) -> Void) {
         let parameters = ""
         let postData =  parameters.data(using: .utf8)
-
-        var request = URLRequest(url: URL(string: "https://ges-cas.kordis.fr/login?service=https%3A%2F%2Fmyges.fr%2Fj_spring_cas_security_check")!,timeoutInterval: Double.infinity)
+		guard let url = URL(string: "https://ges-cas.kordis.fr/login?service=https%3A%2F%2Fmyges.fr%2Fj_spring_cas_security_check") else { return completion(nil) }
+		
+        var request = URLRequest(url: url,timeoutInterval: Double.infinity)
         request.addValue("CASTGC=" + (params["cas"] ?? ""), forHTTPHeaderField: "Cookie")
 
         request.httpMethod = "POST"
@@ -121,107 +170,6 @@ public class APIService {
             let dataString = String(data: data, encoding: .utf8)!
             completion(dataString.components(separatedBy: "<img id=\"userinfo:photo\" src=\"")[1].components(separatedBy: "\" alt=\"\"")[0])
         }.resume()
-    }
-    
-    func getProfilePictureLink(completion: @escaping (String?) -> Void) {
-        getAuthPageToken {
-            if let token = $0 {
-                self.getCAS(token) {
-                    if let cas = $0 {
-                        self.getLinkFromCAS(cas) { link in
-                            completion(link)
-                        }
-                    } else {
-                        completion(nil)
-                    }
-                }
-            } else {
-                completion(nil)
-            }
-        }
-    }
-    
-    private func generateAccessToken(_ credentials: Credentials, completion: @escaping (Result<AccessToken, APIError>) -> Void) {
-        getResultFromApi(credentials) { result in
-            switch result {
-            case is APIError:
-                completion(.failure(result as! APIError))
-            case URLError.unsupportedURL:
-                completion(.success(self.convertErrorToAccessToken(result)))
-            default:
-                completion(.failure(APIError.NotFound))
-            }
-        }
-    }
-    
-    private func getResultFromApi(_ credentials: Credentials, completion: @escaping (Error) -> Void) {
-        let tokenCredentials = "\(credentials.username.lowercased()):\(credentials.password)".toBase64
-        
-        var request = URLRequest(url: URL(string: "https://authentication.kordis.fr/oauth/authorize?response_type=token&client_id=skolae-app")!)
-        request.addValue("Basic \(tokenCredentials)", forHTTPHeaderField: "Authorization")
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let _ = data, let response = response as? HTTPURLResponse, error == nil else {
-                if error.debugDescription.contains("Code=-1009") {
-                    return completion(APIError.NoInternet)
-                } else {
-                    return completion(error!)
-                }
-            }
-			
-			if (500 ... 511).contains(response.statusCode) { // check for server errors
-				completion(APIError.HttpRequest)
-				return
-			}
-			
-            completion(APIError.NotFound)
-        }.resume()
-    }
-    
-    private func convertErrorToAccessToken(_ error: Error) -> AccessToken {
-        let accessUrl = (error as NSError).userInfo["NSErrorFailingURLStringKey"]! as! String
-        
-        var urlElements = (accessUrl as NSString).components(separatedBy: "&")
-        
-        urlElements[0] = urlElements[0].components(separatedBy: "#")[1]
-        
-        for i in 0..<urlElements.count {
-            urlElements[i] = urlElements[i].components(separatedBy: "=")[1]
-        }
-        
-        return AccessToken(accessToken: urlElements[0], tokenType: urlElements[1], expiresIn: urlElements[2], scope: urlElements[3], uid: "")
-    }
-    
-    private func request(_ method: String, _ urlString: String, _ parameters: [String: Any] = [:], _ isKordisApi : Bool = true, completion: @escaping(Result<Data, Error>) -> Void) {
-        if (token != nil && isKordisApi) ||  !isKordisApi {
-            let url = URL(string: (isKordisApi ? "https://api.kordis.fr" : "") +  "\(urlString)")!
-            var request = URLRequest(url: url)
-            
-            request.httpMethod = method
-            if isKordisApi {
-                request.addValue("\(token!.tokenType) \(token!.accessToken)", forHTTPHeaderField: "Authorization")
-            }
-            
-            if method == "POST" {
-                request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-                request.httpBody = parameters.percentEncoded()
-            }
-            
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                guard let data = data, let response = response as? HTTPURLResponse, error == nil else {// check for fundamental networking error
-                    completion(.failure(APIError.HttpRequest))
-                    return
-                }
-                
-                guard (200 ... 299) ~= response.statusCode else { // check for http errors
-                    completion(.failure(APIError.HttpRequest))
-                    return
-                }
-                completion(.success(data))
-            }.resume()
-        } else {
-            completion(.failure(APIError.NoInternet))
-        }
     }
     
     func getYears(completion: @escaping (_ result: YearsResult?) -> Void) {
@@ -361,6 +309,38 @@ public class APIService {
     //    func sendProjectGroupMessage(_ projectGroupId: Int, _ message: String) {
     //        return self.post("/me/projectGroups/\(projectGroupId)/messages", ["projectGroupId":  projectGroupId, "message": message])
     //    }
+	
+	private func request(_ method: String, _ urlString: String, _ parameters: [String: Any] = [:], _ isKordisApi : Bool = true, completion: @escaping(Result<Data, Error>) -> Void) {
+		if (token != nil && isKordisApi) ||  !isKordisApi {
+			let url = URL(string: (isKordisApi ? "https://api.kordis.fr" : "") +  "\(urlString)")!
+			var request = URLRequest(url: url)
+			
+			request.httpMethod = method
+			if isKordisApi {
+				request.addValue("\(token!.tokenType) \(token!.accessToken)", forHTTPHeaderField: "Authorization")
+			}
+			
+			if method == "POST" {
+				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+				request.httpBody = parameters.percentEncoded()
+			}
+			
+			URLSession.shared.dataTask(with: request) { data, response, error in
+				guard let data = data, let response = response as? HTTPURLResponse, error == nil else {// check for fundamental networking error
+					completion(.failure(APIError.HttpRequest))
+					return
+				}
+				
+				guard (200 ... 299) ~= response.statusCode else { // check for http errors
+					completion(.failure(APIError.HttpRequest))
+					return
+				}
+				completion(.success(data))
+			}.resume()
+		} else {
+			completion(.failure(APIError.NoInternet))
+		}
+	}
     
     private func get(_ url: String, completion: @escaping(Result<Data, Error>) -> Void) {
         self.request("GET", url) { result in
