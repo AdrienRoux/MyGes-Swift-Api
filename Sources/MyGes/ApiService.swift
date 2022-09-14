@@ -168,8 +168,10 @@ public class APIService {
         request.httpBody = postData
 
         URLSession.shared.dataTask(with: request) { data, response, error in
-          guard let data = data else { return completion(nil) }
-            let dataString = String(data: data, encoding: .utf8)!
+			guard let data = data else { return completion(nil) }
+			guard let dataString = String(data: data, encoding: .utf8),
+					dataString.components(separatedBy: "<img id=\"userinfo:photo\" src=\"").count > 1
+			else { return completion(nil) }
             completion(dataString.components(separatedBy: "<img id=\"userinfo:photo\" src=\"")[1].components(separatedBy: "\" alt=\"\"")[0])
         }.resume()
     }
