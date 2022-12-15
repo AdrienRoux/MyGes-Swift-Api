@@ -8,12 +8,12 @@ final class MyGesTests: XCTestCase {
 	var credentials = Credentials(username: ProcessInfo.processInfo.environment["TEST_USERNAME"]!, password: ProcessInfo.processInfo.environment["TEST_PWD"]!)
     
     override func setUpWithError() throws {
-		APIService.shared.credentials = credentials
+		MyGes.shared.credentials = credentials
 	}
     
     func testLogin() throws {
         let s = DispatchSemaphore(value: 0)
-		MyGes.login(credentials) {
+		MyGes.shared.login(credentials) {
             XCTAssert($0 == nil)
             s.signal()
         }
@@ -22,7 +22,7 @@ final class MyGesTests: XCTestCase {
     
     func testGetYears() throws {
         let s = DispatchSemaphore(value: 0)
-        MyGes.getLastYear {
+        MyGes.shared.getLastYear {
             XCTAssert($0 != nil)
             s.signal()
         }
@@ -31,7 +31,7 @@ final class MyGesTests: XCTestCase {
     
     func testGetLastYear() throws {
         let s = DispatchSemaphore(value: 0)
-        MyGes.getLastYear {
+        MyGes.shared.getLastYear {
             XCTAssert($0 != nil)
             s.signal()
         }
@@ -40,7 +40,7 @@ final class MyGesTests: XCTestCase {
     
     func testGetProfile() throws {
         let s = DispatchSemaphore(value: 0)
-        MyGes.getProfile {
+        MyGes.shared.getProfile {
             XCTAssert($0 != nil)
             s.signal()
         }
@@ -51,7 +51,7 @@ final class MyGesTests: XCTestCase {
         let s = DispatchSemaphore(value: 0)
         var date = Date()
         date.add(type: .day, 30)
-        MyGes.getAgenda(startDate: Date(), endDate: date) {
+        MyGes.shared.getAgenda(startDate: Date(), endDate: date) {
             XCTAssert($0 != nil)
             s.signal()
         }
@@ -60,7 +60,7 @@ final class MyGesTests: XCTestCase {
     
     func testGetAbsences() throws {
         let s = DispatchSemaphore(value: 0)
-        MyGes.getAbsences { _ in
+        MyGes.shared.getAbsences { _ in
             XCTAssert(true)
             s.signal()
         }
@@ -69,7 +69,7 @@ final class MyGesTests: XCTestCase {
     
     func testGetAbsencesWithYear() throws {
         let s = DispatchSemaphore(value: 0)
-        MyGes.getAbsences(year: 2021) {
+        MyGes.shared.getAbsences(year: 2021) {
             XCTAssert($0 != nil)
             s.signal()
         }
@@ -78,7 +78,7 @@ final class MyGesTests: XCTestCase {
     
     func testGetGrades() throws {
         let s = DispatchSemaphore(value: 0)
-        MyGes.getGrades {
+        MyGes.shared.getGrades {
             XCTAssert($0 != nil)
             s.signal()
         }
@@ -87,7 +87,7 @@ final class MyGesTests: XCTestCase {
     
     func testGetGradesWithYear() throws {
         let s = DispatchSemaphore(value: 0)
-        MyGes.getGrades(year: 2021) {
+        MyGes.shared.getGrades(year: 2021) {
             XCTAssert($0 != nil)
             s.signal()
         }
@@ -96,7 +96,7 @@ final class MyGesTests: XCTestCase {
     
     func testGetCourses() throws {
         let s = DispatchSemaphore(value: 0)
-        MyGes.getCourses {
+        MyGes.shared.getCourses {
             XCTAssert($0 != nil)
             s.signal()
         }
@@ -105,7 +105,7 @@ final class MyGesTests: XCTestCase {
     
     func testGetCoursesWithYear() throws {
         let s = DispatchSemaphore(value: 0)
-        MyGes.getCourses(year: 2021) {
+        MyGes.shared.getCourses(year: 2021) {
             XCTAssert($0 != nil)
             s.signal()
         }
@@ -114,7 +114,7 @@ final class MyGesTests: XCTestCase {
     
     func testGetProjects() throws {
         let s = DispatchSemaphore(value: 0)
-        MyGes.getProjects {
+        MyGes.shared.getProjects {
             XCTAssert(true)
 			guard let lastProject = $0?.last else {
 				s.signal()
@@ -128,7 +128,7 @@ final class MyGesTests: XCTestCase {
     
     func testGetProjectsWithYear() throws {
         let s = DispatchSemaphore(value: 0)
-        MyGes.getProjects(year: 2021) {
+        MyGes.shared.getProjects(year: 2021) {
             XCTAssert($0 != nil)
             s.signal()
         }
@@ -137,7 +137,7 @@ final class MyGesTests: XCTestCase {
     
     func testGetNextProjectSteps() throws {
         let s = DispatchSemaphore(value: 0)
-        MyGes.getNextProjectSteps { _ in
+        MyGes.shared.getNextProjectSteps { _ in
             XCTAssert(true)
             s.signal()
         }
@@ -147,7 +147,7 @@ final class MyGesTests: XCTestCase {
     func testGetSingleProject() throws {
 		guard let lastProjectId = lastProject?.project_id else { return }
         let s = DispatchSemaphore(value: 0)
-		MyGes.getProject(id: lastProjectId) {
+		MyGes.shared.getProject(id: lastProjectId) {
             XCTAssert($0 != nil)
             s.signal()
         }
@@ -157,8 +157,8 @@ final class MyGesTests: XCTestCase {
     func testLeaveGroup() throws {
 		guard let lastProjectId = lastProject?.project_id else { return }
         let s = DispatchSemaphore(value: 0)
-        MyGes.getProject(id: lastProjectId) {
-            MyGes.leaveProjectGroup(($0?.rc_id)!, ($0?.project_id)!, ($0?.groups?.first?.project_group_id)!) {
+        MyGes.shared.getProject(id: lastProjectId) {
+            MyGes.shared.leaveProjectGroup(($0?.rc_id)!, ($0?.project_id)!, ($0?.groups?.first?.project_group_id)!) {
                 XCTAssert($0 == true)
                 s.signal()
             }
@@ -169,8 +169,8 @@ final class MyGesTests: XCTestCase {
     func testLfJoinGroup() throws {
 		guard let lastProjectId = lastProject?.project_id else { return }
         let s = DispatchSemaphore(value: 0)
-        MyGes.getProject(id: lastProjectId) {
-            MyGes.joinProjectGroup(($0?.rc_id)!, ($0?.project_id)!, ($0?.groups?.first?.project_group_id)!) {
+        MyGes.shared.getProject(id: lastProjectId) {
+            MyGes.shared.joinProjectGroup(($0?.rc_id)!, ($0?.project_id)!, ($0?.groups?.first?.project_group_id)!) {
                 XCTAssert($0 == true)
                 s.signal()
             }

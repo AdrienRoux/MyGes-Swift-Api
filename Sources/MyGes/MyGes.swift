@@ -1,20 +1,11 @@
 import Foundation
 
 public struct MyGes {
-	public static func login(_ credentials: Credentials, completion: @escaping (APIError?) -> Void) {
-		APIService.shared.login(credentials) {
-			switch $0 {
-			case .success:
-				APIService.shared.credentials = credentials
-				completion(nil)
-			case .failure(let error):
-				completion(error)
-			}
-		}
-    }
+	public static var shared = MyGes()
+	public var credentials: Credentials?
 	
-	private static func tryLogin(completion: @escaping (Bool) -> Void) {
-		guard let credentials = APIService.shared.credentials else {
+	private func tryLogin(completion: @escaping (Bool) -> Void) {
+		guard let credentials = MyGes.shared.credentials else {
 			print("You must go through login.")
 			return completion(false)
 		}
@@ -28,19 +19,33 @@ public struct MyGes {
 			}
 		}
 	}
-    
-    public static func getYears(completion: @escaping ([Int]?) -> Void) {
-        tryLogin {
+}
+
+public extension MyGes {
+	func login(_ credentials: Credentials, completion: @escaping (APIError?) -> Void) {
+		APIService.shared.login(credentials) {
+			switch $0 {
+			case .success:
+				MyGes.shared.credentials = credentials
+				completion(nil)
+			case .failure(let error):
+				completion(error)
+			}
+		}
+	}
+	
+	func getYears(completion: @escaping ([Int]?) -> Void) {
+		tryLogin {
 			guard $0 else { return completion(nil) }
 			APIService.shared.getYears {
 				guard let years = $0 else { return completion(nil) }
 				completion(years.result)
 			}
-        }
-    }
-    
-    public static func getLastYear(completion: @escaping (Int?) -> Void) {
-        tryLogin {
+		}
+	}
+	
+	func getLastYear(completion: @escaping (Int?) -> Void) {
+		tryLogin {
 			guard $0 else { return completion(nil) }
 			APIService.shared.getYears {
 				guard let years = $0 else { return completion(nil) }
@@ -61,29 +66,29 @@ public struct MyGes {
 					completion(years.result?.first)
 				}
 			}
-        }
-    }
-    
-    public static func getProfile(completion: @escaping (ProfileItem?) -> Void) {
-        tryLogin {
+		}
+	}
+	
+	func getProfile(completion: @escaping (ProfileItem?) -> Void) {
+		tryLogin {
 			guard $0 else { return completion(nil) }
 			APIService.shared.getProfile {
 				completion($0?.result)
 			}
-        }
-    }
-    
-    public static func getAgenda(startDate: Date, endDate: Date, completion: @escaping ([AgendaItem]?) -> Void) {
-        tryLogin {
+		}
+	}
+	
+	func getAgenda(startDate: Date, endDate: Date, completion: @escaping ([AgendaItem]?) -> Void) {
+		tryLogin {
 			guard $0 else { return completion(nil) }
 			APIService.shared.getAgenda(startDate, endDate) {
 				completion($0?.result)
 			}
-        }
-    }
-    
-    public static func getAbsences(year: Int? = nil, completion: @escaping ([AbsenceItem]?) -> Void) {
-        tryLogin {
+		}
+	}
+	
+	func getAbsences(year: Int? = nil, completion: @escaping ([AbsenceItem]?) -> Void) {
+		tryLogin {
 			guard $0 else { return completion(nil) }
 			if let year = year {
 				APIService.shared.getAbsences(year.description) {
@@ -99,11 +104,11 @@ public struct MyGes {
 					}
 				}
 			}
-        }
-    }
-    
-    public static func getGrades(year: Int? = nil, completion: @escaping ([GradeItem]?) -> Void) {
-        tryLogin {
+		}
+	}
+	
+	func getGrades(year: Int? = nil, completion: @escaping ([GradeItem]?) -> Void) {
+		tryLogin {
 			guard $0 else { return completion(nil) }
 			if let year = year {
 				APIService.shared.getGrades(year.description) {
@@ -119,11 +124,11 @@ public struct MyGes {
 					}
 				}
 			}
-        }
-    }
-    
-    public static func getCourses(year: Int? = nil, completion: @escaping ([CourseItem]?) -> Void) {
-        tryLogin {
+		}
+	}
+	
+	func getCourses(year: Int? = nil, completion: @escaping ([CourseItem]?) -> Void) {
+		tryLogin {
 			guard $0 else { return completion(nil) }
 			if let year = year {
 				APIService.shared.getCourses(year.description) {
@@ -139,11 +144,11 @@ public struct MyGes {
 					}
 				}
 			}
-        }
-    }
-    
-    public static func getProjects(year: Int? = nil, completion: @escaping ([ProjectItem]?) -> Void) {
-        tryLogin {
+		}
+	}
+	
+	func getProjects(year: Int? = nil, completion: @escaping ([ProjectItem]?) -> Void) {
+		tryLogin {
 			guard $0 else { return completion(nil) }
 			if let year = year {
 				APIService.shared.getProjects(year.description) {
@@ -159,48 +164,51 @@ public struct MyGes {
 					}
 				}
 			}
-        }
-    }
-    
-    public static func getNextProjectSteps(completion: @escaping ([ProjectStepItem]?) -> Void) {
-        tryLogin {
+		}
+	}
+	
+	func getNextProjectSteps(completion: @escaping ([ProjectStepItem]?) -> Void) {
+		tryLogin {
 			guard $0 else { return completion(nil) }
 			APIService.shared.getNextProjectSteps {
 				guard let steps = $0 else { return completion(nil) }
 				completion(steps.result)
 			}
-        }
-    }
-    
-    public static func getProject(id: Int, completion: @escaping (ProjectItem?) -> Void) {
-        tryLogin {
+		}
+	}
+	
+	func getProject(id: Int, completion: @escaping (ProjectItem?) -> Void) {
+		tryLogin {
 			guard $0 else { return completion(nil) }
 			APIService.shared.getProject(projectId: id) {
 				guard let project = $0 else { return completion(nil) }
 				completion(project.result)
 			}
-        }
-    }
-    
-    public static func joinProjectGroup(_ projectRcId: Int, _ projectId: Int, _ projectGroupId: Int, completion: @escaping (Bool) -> Void) {
-        tryLogin {
+		}
+	}
+	
+	func joinProjectGroup(_ projectRcId: Int, _ projectId: Int, _ projectGroupId: Int, completion: @escaping (Bool) -> Void) {
+		tryLogin {
 			guard $0 else { return completion(false) }
 			APIService.shared.joinProjectGroup(projectRcId, projectId, projectGroupId) {
 				completion($0)
 			}
-        }
-    }
-    
-    public static func leaveProjectGroup(_ projectRcId: Int, _ projectId: Int, _ projectGroupId: Int, completion: @escaping (Bool) -> Void) {
-        tryLogin {
+		}
+	}
+	
+	func leaveProjectGroup(_ projectRcId: Int, _ projectId: Int, _ projectGroupId: Int, completion: @escaping (Bool) -> Void) {
+		tryLogin {
 			guard $0 else { return completion(false) }
 			APIService.shared.quitProjectGroup(projectRcId, projectId, projectGroupId) {
 				completion($0)
 			}
-        }
-    }
-    
-	public static func getProfilePicLink(completion: @escaping (String?) -> Void) {
-        APIService.shared.getProfilePictureLink { completion($0) }
-    }
+		}
+	}
+	
+	func getProfilePicLink(completion: @escaping (String?) -> Void) {
+		tryLogin {
+			guard $0 else { return completion(nil) }
+			APIService.shared.getProfilePictureLink { completion($0) }
+		}
+	}
 }

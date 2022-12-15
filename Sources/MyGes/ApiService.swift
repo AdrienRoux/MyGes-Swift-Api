@@ -35,8 +35,6 @@ public struct GesAuthenticationToken {
 
 public class APIService {
     static let shared = APIService()
-    
-    var credentials: Credentials?
     var token: GesAuthenticationToken?
     
     func login(_ credentials: Credentials, completion: @escaping (Result<Bool, APIError>) -> Void) {
@@ -56,7 +54,7 @@ public class APIService {
 						completion(.failure(.HttpRequest))
 						return
 					}
-					self.credentials = credentials
+					MyGes.shared.credentials = credentials
 					guard let errorToken = self.convertErrorToAccessToken(error as NSError) else { return completion(.failure(.HttpRequest))}
 					self.token = GesAuthenticationToken(accessToken: errorToken.accessToken, tokenType: errorToken.tokenType)
 					return completion(.success(true))
@@ -86,8 +84,8 @@ public class APIService {
 	
 	func getProfilePictureLink(completion: @escaping (String?) -> Void) {
 		getAuthPageToken { [weak self] in
-			if let token = $0, let credentials = self?.credentials, !token.isEmpty {
-				self?.getCAS(credentials, token) {
+			if let token = $0, !token.isEmpty {
+				self?.getCAS(token) {
 					if let cas = $0 {
 						self?.getLinkFromCAS(cas) { link in
 							completion(link)
@@ -127,9 +125,9 @@ public class APIService {
         }
     }
     
-    private func getCAS(_ credentials: Credentials, _ params: [String:String], completion: @escaping ([String: String]?) -> Void) {
-		guard let username = credentials.username.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else { return completion(nil) }
-		guard let password = credentials.password.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else { return completion(nil) }
+    private func getCAS(_ params: [String:String], completion: @escaping ([String: String]?) -> Void) {
+		guard let username = MyGes.shared.credentials?.username.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else { return completion(nil) }
+		guard let password = MyGes.shared.credentials?.password.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else { return completion(nil) }
 		guard let url = URL(string: "https://ges-cas.kordis.fr/login?service=https%3A%2F%2Fmyges.fr%2Fj_spring_cas_security_check") else { return completion(nil) }
 		guard let lt = params["lt"], let execution = params["execution"] else { return completion(nil) }
 		

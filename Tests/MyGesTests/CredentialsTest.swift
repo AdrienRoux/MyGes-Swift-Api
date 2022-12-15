@@ -13,7 +13,7 @@ class CredentialsTest: XCTestCase {
     func testCredentialsError() throws {
 		let credentials = Credentials(username: "", password: "")
         let s = DispatchSemaphore(value: 0)
-        MyGes.login(credentials) {
+		MyGes.shared.login(credentials) {
             XCTAssert($0 == APIError.NotFound)
             s.signal()
         }
