@@ -48,22 +48,11 @@ public extension MyGes {
 		tryLogin {
 			guard $0 else { return completion(nil) }
 			APIService.shared.getYears {
-				guard let years = $0 else { return completion(nil) }
-				let formatter = DateFormatter()
-				formatter.dateFormat = "yyyy/MM/dd HH:mm"
-				guard let firstSeptember = formatter.date(from: Date.currentYear + "/09/01 00:00") else { return completion(nil) }
-				if Date().millisecondsSince1970 < firstSeptember.millisecondsSince1970 {
-					if let years = years.result {
-						if years.count >= 2 {
-							completion(years[1])
-						} else {
-							completion(years.first)
-						}
-					} else {
-						completion(nil)
-					}
+				guard let lastYear = $0?.result?.first else { return completion(nil) }
+				if let currentMonth = Int(Date.currentMonth), currentMonth < 09 && lastYear == Int(Date.currentYear) {
+					return completion(lastYear - 1)
 				} else {
-					completion(years.result?.first)
+					return completion(lastYear)
 				}
 			}
 		}

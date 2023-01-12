@@ -12,6 +12,10 @@ extension Date {
 		DateFormatter.year.string(from: Date())
 	}
 	
+	static var currentMonth: String {
+		DateFormatter.month.string(from: Date())
+	}
+	
     mutating func add(type: Calendar.Component, _ value: Int) {
         self = Calendar.current.date(byAdding: type, value: value, to: self)!
     }
@@ -88,6 +92,12 @@ extension DateFormatter {
 	static var year: DateFormatter {
 		let formatter = DateFormatter()
 		formatter.dateFormat = "yyyy"
+		return formatter
+	}
+	
+	static var month: DateFormatter {
+		let formatter = DateFormatter()
+		formatter.dateFormat = "MM"
 		return formatter
 	}
 }
