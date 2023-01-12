@@ -74,7 +74,7 @@ public class APIService {
 		guard let accessUrl = error.userInfo["NSErrorFailingURLStringKey"] as? String else { return nil }
 		
 		var urlElements = (accessUrl as NSString).components(separatedBy: "&")
-		
+		guard urlElements.count > 1 else { return nil }
 		urlElements[0] = urlElements[0].components(separatedBy: "#")[1]
 		
 		for i in 0..<urlElements.count { urlElements[i] = urlElements[i].components(separatedBy: "=")[1] }
